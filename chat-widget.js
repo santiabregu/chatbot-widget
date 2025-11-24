@@ -322,6 +322,8 @@
     window.N8NChatWidgetInitialized = true;
 
     let currentSessionId = '';
+    let messageCount = 0;
+    const MAX_MESSAGES = 5;
 
     // Create widget container
     const widgetContainer = document.createElement('div');
@@ -395,16 +397,18 @@
         return crypto.randomUUID();
     }
 
-    async function startNewConversation() {
-        currentSessionId = generateUUID();
-        const data = [{
-            action: "loadPreviousSession",
-            sessionId: currentSessionId,
-            route: config.webhook.route,
-            metadata: {
-                userId: ""
-            }
-        }];
+            function startNewConversation() {
+            // crear un sessionId pero NO hacer POST
+            currentSessionId = generateUUID();
+        
+            // activar la interfaz sin pedir nada al servidor
+            chatContainer.querySelector('.brand-header').style.display = 'none';
+            chatContainer.querySelector('.new-conversation').style.display = 'none';
+            chatInterface.classList.add('active');
+        
+            // no mostrar mensaje del bot aún
+        }
+
 
         try {
             const response = await fetch(config.webhook.url, {
@@ -431,6 +435,21 @@
     }
 
     async function sendMessage(message) {
+    // LIMITAR MENSAJES
+    if (messageCount >= MAX_MESSAGES) {
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'chat-message bot';
+        botMessageDiv.textContent = "Has alcanzado el límite de mensajes de esta conversación.";
+        messagesContainer.appendChild(botMessageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+        // desactivar el input
+        textarea.disabled = true;
+        sendButton.disabled = true;
+    
+        return;
+    }
+
         const messageData = {
             action: "sendMessage",
             sessionId: currentSessionId,
@@ -446,6 +465,7 @@
         userMessageDiv.textContent = message;
         messagesContainer.appendChild(userMessageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        messageCount++;
 
         try {
             const response = await fetch(config.webhook.url, {
