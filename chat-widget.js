@@ -323,7 +323,7 @@
 
     let currentSessionId = '';
     let messageCount = 0;
-    const MAX_MESSAGES = 5;
+    const MAX_MESSAGES = 10;
 
     // Create widget container
     const widgetContainer = document.createElement('div');
