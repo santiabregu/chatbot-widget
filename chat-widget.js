@@ -323,7 +323,7 @@
 
     let currentSessionId = '';
     let messageCount = 0;
-    const MAX_MESSAGES = 12; // puedes poner 10, 15, lo que quieras
+    const MAX_MESSAGES = 5; // puedes poner 10, 15, lo que quieras
 
 
     // Create widget container
