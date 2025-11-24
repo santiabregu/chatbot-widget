@@ -399,6 +399,7 @@
     }
 
     async function startNewConversation() {
+        messageCount = 0; // RESET LIMIT
         currentSessionId = generateUUID();
         const data = [{
             action: "loadPreviousSession",
