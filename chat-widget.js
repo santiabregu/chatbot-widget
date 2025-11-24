@@ -401,14 +401,14 @@
     async function startNewConversation() {
         messageCount = 0; // RESET LIMIT
         currentSessionId = generateUUID();
-        const data = [{
+        const data = {
             action: "loadPreviousSession",
-            sessionId: currentSessionId,
+            sessionId: currentSessionId || "default-session",
             route: config.webhook.route,
             metadata: {
                 userId: ""
             }
-        }];
+        };
 
         try {
             const response = await fetch(config.webhook.url, {
