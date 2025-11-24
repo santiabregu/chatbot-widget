@@ -435,8 +435,7 @@
     }
 
    async function sendMessage(message) {
-
-    // LIMITADOR
+    // CHECK LIMIT FIRST
     if (messageCount >= MAX_MESSAGES) {
         const botMessageDiv = document.createElement('div');
         botMessageDiv.className = 'chat-message bot';
@@ -444,11 +443,25 @@
             "Has llegado al límite de consultas 😊. Para saber más, llámanos al +34 600 000 000 o visita nuestra web.";
         messagesContainer.appendChild(botMessageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        return; 
+        
+        // Disable further input
+        textarea.disabled = true;
+        sendButton.disabled = true;
+        textarea.placeholder = "Límite alcanzado";
+        
+        return;
     }
 
-    // Count only ONCE
+    // Increment counter
     messageCount++;
+    console.log(`Message ${messageCount}/${MAX_MESSAGES} sent`); // Debug log
+
+    // Add user message
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.className = 'chat-message user';
+    userMessageDiv.textContent = message;
+    messagesContainer.appendChild(userMessageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     const messageData = {
         action: "sendMessage",
@@ -458,32 +471,24 @@
         metadata: { userId: "" }
     };
 
-        const userMessageDiv = document.createElement('div');
-        userMessageDiv.className = 'chat-message user';
-        userMessageDiv.textContent = message;
-        messagesContainer.appendChild(userMessageDiv);
+    try {
+        const response = await fetch(config.webhook.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(messageData)
+        });
+        
+        const data = await response.json();
+        
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'chat-message bot';
+        botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
+        messagesContainer.appendChild(botMessageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        try {
-            const response = await fetch(config.webhook.url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(messageData)
-            });
-            
-            const data = await response.json();
-            
-            const botMessageDiv = document.createElement('div');
-            botMessageDiv.className = 'chat-message bot';
-            botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
-            messagesContainer.appendChild(botMessageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    } catch (error) {
+        console.error('Error:', error);
     }
+}
 
     newChatBtn.addEventListener('click', startNewConversation);
     
