@@ -322,6 +322,9 @@
     window.N8NChatWidgetInitialized = true;
 
     let currentSessionId = '';
+    let messageCount = 0;
+    const MAX_MESSAGES = 12; // puedes poner 10, 15, lo que quieras
+
 
     // Create widget container
     const widgetContainer = document.createElement('div');
@@ -430,16 +433,29 @@
         }
     }
 
-    async function sendMessage(message) {
-        const messageData = {
-            action: "sendMessage",
-            sessionId: currentSessionId,
-            route: config.webhook.route,
-            chatInput: message,
-            metadata: {
-                userId: ""
-            }
-        };
+   async function sendMessage(message) {
+
+    // LIMITADOR
+    if (messageCount >= MAX_MESSAGES) {
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'chat-message bot';
+        botMessageDiv.textContent = 
+            "Has llegado al límite de consultas 😊. Para saber más, llámanos al +34 600 000 000 o visita nuestra web.";
+        messagesContainer.appendChild(botMessageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        return; 
+    }
+
+    // Count only ONCE
+    messageCount++;
+
+    const messageData = {
+        action: "sendMessage",
+        sessionId: currentSessionId,
+        route: config.webhook.route,
+        chatInput: message,
+        metadata: { userId: "" }
+    };
 
         const userMessageDiv = document.createElement('div');
         userMessageDiv.className = 'chat-message user';
