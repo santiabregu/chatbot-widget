@@ -398,7 +398,6 @@
     }
 
     async function startNewConversation() {
-      tion startNewConversation() {
         currentSessionId = generateUUID();
         messageCount = 0; // reset message limit
 
