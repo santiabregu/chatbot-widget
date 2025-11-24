@@ -414,7 +414,7 @@
         if (messageCount >= MAX_MESSAGES) {
             const botMessageDiv = document.createElement("div");
             botMessageDiv.className = "chat-message bot";
-            botMessageDiv.textContent = "Has alcanzado el límite de mensajes de esta conversación.";
+            botMessageDiv.textContent = "Has alcanzado tu límite de mensajes. Esta es solo una versión de demostración. Si deseas probar la experiencia completa del chatbot o hablar con nosotros, contáctanos en info@people1.ai o en el +34 690 90 36 98.";
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
