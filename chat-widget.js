@@ -322,7 +322,7 @@
     window.N8NChatWidgetInitialized = true;
 
     let currentSessionId = '';
-    let messageCount = 0;
+    let messageCount = parseInt(localStorage.getItem("chat_message_count") || "0");
     const MAX_MESSAGES = 10;
 
     // Create widget container
@@ -399,7 +399,9 @@
 
     async function startNewConversation() {
         currentSessionId = generateUUID();
-        messageCount = 0; // reset message limit
+        messageCount = 0;
+        localStorage.setItem("chat_message_count", "0");
+
 
         chatContainer.querySelector(".brand-header").style.display = "none";
         chatContainer.querySelector(".new-conversation").style.display = "none";
@@ -439,6 +441,8 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
         messageCount++;
+        localStorage.setItem("chat_message_count", messageCount);
+
 
         try {
             const response = await fetch(config.webhook?.url, {
