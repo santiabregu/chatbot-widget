@@ -274,6 +274,11 @@
     `;
 
     // Load Geist font
+    // Load Markdown parser
+    const showdownScript = document.createElement("script");
+    showdownScript.src = "https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js";
+    document.head.appendChild(showdownScript);
+
     const fontLink = document.createElement('link');
     fontLink.rel = 'stylesheet';
     fontLink.href = 'https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/style.css';
@@ -455,7 +460,12 @@
 
             const botMessageDiv = document.createElement("div");
             botMessageDiv.className = "chat-message bot";
-            botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
+
+            // Convert Markdown → HTML
+            const converter = new showdown.Converter();
+            const markdownOutput = Array.isArray(data) ? data[0].output : data.output;
+            botMessageDiv.innerHTML = converter.makeHtml(markdownOutput);
+
 
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
